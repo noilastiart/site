@@ -1,90 +1,92 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Noilasti</title>
   <style>
     body {
-      font-family: sans-serif;
-      background-color: #111;
-      color: #eee;
       margin: 0;
-      padding: 0;
+      background-color: #0a0a0a;
+      color: #e5e5e5;
+      font-family: 'Helvetica Neue', sans-serif;
     }
     header {
-      background-color: #1a1a1a;
-      padding: 2rem;
       text-align: center;
+      padding: 6rem 2rem 3rem;
     }
-    header h1 {
-      margin: 0;
+    h1 {
       font-size: 2.5rem;
+      letter-spacing: 0.1em;
+      color: #d1c48c;
     }
-    header p {
-      margin: 0.5rem 0 0;
+    .tagline {
+      margin-top: 1rem;
       font-style: italic;
+      color: #999;
     }
     nav {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      background-color: #222;
-      padding: 1rem;
+      text-align: center;
+      margin-top: 2rem;
     }
     nav a {
-      color: #ccc;
+      margin: 0 1.5rem;
+      color: #e5e5e5;
       text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px solid transparent;
+      transition: border-bottom 0.3s ease;
     }
     nav a:hover {
-      color: #fff;
-    }
-    main {
-      padding: 2rem;
+      border-bottom: 1px solid #d1c48c;
     }
     section {
-      margin-bottom: 3rem;
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      line-height: 1.6;
     }
-    h2 {
-      color: #f56;
+    footer {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-size: 0.9rem;
+      color: #666;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Noilasti</h1>
-    <p>Ink and Distortion</p>
+    <h1>NOILASTI</h1>
+    <p class="tagline">Digital Mythology | Symbolic Systems | Immersive Layers</p>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#resonance">Resonance</a>
+      <a href="#about">About</a>
+    </nav>
   </header>
-  <nav>
-    <a href="#atelier">Atelier</a>
-    <a href="#studio">Studio</a>
-    <a href="#projects">Projects</a>
-    <a href="#contact">Contact</a>
-  </nav>
-  <main>
-    <section id="bio">
-      <h2>Artist Bio</h2>
-      <p>
-        Noilasti is the experimental creative alias of an artist whose work rides the electric edge between ink, glitch, noise, and narrative. From haunting gig posters and surreal vector abstractions to sonic fragments intended for sync licensing, Noilasti’s creations are raw, layered, and unapologetically personal. This is a multidisciplinary studio forged in alleys and algorithms — an ongoing transmission from one creative node to another.
-      </p>
-    </section>
-    <section id="atelier">
-      <h2>Atelier</h2>
-      <p>Visual artwork, prints, gig posters and design coming soon...</p>
-    </section>
-    <section id="studio">
-      <h2>Studio</h2>
-      <p>Music, sync-ready tracks, and audio experiments coming soon...</p>
-    </section>
-    <section id="projects">
-      <h2>Projects</h2>
-      <p>Shader work, interactive concepts, and collaborations coming soon...</p>
-    </section>
-    <section id="contact">
-      <h2>Contact</h2>
-      <p>Email and socials coming soon. For now, find me on <a href="https://www.instagram.com/descendninedown" target="_blank">Instagram</a>.</p>
-    </section>
-  </main>
+
+  <section id="work">
+    <h2>Selected Works</h2>
+    <p><strong>A Queen Begets a King</strong><br>
+    Interactive Digital — A ritual of symmetry, fragment, and reformation. <a href="#">View Piece</a></p>
+
+    <p><strong>Shader Baby</strong><br>
+    WebGL Loop — Audio-reactive tunnel of recursion and glow. <a href="#">View Piece</a></p>
+  </section>
+
+  <section id="resonance">
+    <h2>Resonance</h2>
+    <p>Ambient compositions that echo Noilasti’s themes of distortion, layering, and symbolic pattern. These soundworks often exist independently — like audible myths unfolding in slow time — and are increasingly shaped with sync licensing and collaborative media in mind.</p>
+    <p><em>Coming soon: Embedded tracks + links to soundwork archive.</em></p>
+  </section>
+
+  <section id="about">
+    <h2>About</h2>
+    <p>The work of J. Evans explores mirrored identity, emergent language, and immersive motion. Built through layered distortion, each piece emerges through recursion, symmetry, and slow reveal. Noilasti isn’t just fragments of a whole — it is symbolic depth, always shifting, always becoming — revealing myths only the observer can speak into being.</p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Noilasti. For licensing or collaboration inquiries, contact: [your@email.com]</p>
+  </footer>
 </body>
 </html>
