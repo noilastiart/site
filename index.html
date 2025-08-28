@@ -3,68 +3,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Noilasti</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Noilasti – TV Field</title>
   <style>
-    :root { --img-w: 1920; --img-h: 1080; } /* set to your image’s pixel size */
-    html, body { margin:0; height:100%; background:#000; }
-    .stage {
-      position: relative;
-      max-width: 100vw;
-      margin: 0 auto;
-      line-height: 0; /* remove gaps under images */
+    :root{
+      /* native size of landing-bg.png */
+      --bg-w: 2560;
+      --bg-h: 1563;
+      --maxw: 1600px;
     }
-    .bg {
-      width: 100%;
-      height: auto;
-      display: block;
+
+    html, body { height:100%; margin:0; background:#000; color:#eee; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+    .stage{
+      position:relative;
+      width:100%;
+      max-width: var(--maxw);
+      margin-inline:auto;
+      aspect-ratio: var(--bg-w) / var(--bg-h);
+      background: center / cover no-repeat url("landing-bg.png");
+      /* If you prefer “contain” (whole image always visible), swap cover->contain */
     }
-    /* SVG overlays the image and scales with it */
-    .hotspots {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none; /* only hotspots catch clicks */
+
+    /* SVG overlay fills the stage */
+    svg.hotspots{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      pointer-events:none;                 /* SVG ignores pointer except on links below */
     }
-    .hotspots a {
-      pointer-events: auto;
-    }
-    /* Dev mode: make boxes visible while positioning, then set fill to transparent */
-    .hotspots rect {
-      fill: rgba(0, 255, 255, 0.18);       /* temporarily visible */
-      stroke: rgba(0, 255, 255, 0.9);
+    svg.hotspots a{ pointer-events:all; }  /* make only links clickable */
+
+    /* Look & feel for boxes (visible only in debug) */
+    .hotspots rect{
+      fill: rgba(255,255,255,.12);
+      stroke: rgba(255,255,255,.85);
       stroke-width: 3;
-      rx: 10; ry: 10;
+      rx: 18; ry: 18;
+      transition: transform .15s ease, filter .15s ease, stroke .15s ease;
     }
-    .hotspots a:focus rect { outline: 3px solid #fff; outline-offset: 4px; }
+    /* glow effect on hover/focus */
+    .hotspots a:focus rect,
+    .hotspots a:hover rect{
+      transform: scale(1.02);
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.75));
+      stroke: #fff;
+      outline: none;
+    }
+
+    /* In normal mode boxes are invisible but still clickable */
+    body:not(.debug) .hotspots rect{
+      fill: transparent; stroke: transparent;
+    }
+
+    /* Keyboard focus ring for accessibility (when boxes are invisible) */
+    body:not(.debug) .hotspots a:focus rect{
+      stroke: #fff; stroke-dasharray: 6 6;
+    }
+
+    /* Optional helper badge bottom-left to remind the debug toggle */
+    .hint{
+      position:fixed; left:.75rem; bottom:.5rem; color:#9aa; font-size:.8rem; opacity:.75;
+      user-select:none;
+    }
   </style>
 </head>
 <body>
-  <div class="stage" aria-label="Noilasti landing">
-    <!-- Your background image -->
-    <img src="landing-bg.png" class="bg" alt="Surreal field with TVs under a stormy sky" />
 
-    <!-- SVG overlay sized to your image’s original pixels via viewBox -->
-    <svg class="hotspots"
-         viewBox="0 0 1920 1080"  /* change to your image’s exact pixels */
-         preserveAspectRatio="none"
-         role="presentation">
-      <!-- TV 1 (left wood console) -->
-      <a href="page1.html" target="_self" aria-label="Enter TV 1">
-        <rect x="330" y="775" width="260" height="190" />
+  <div class="stage" aria-label="Surreal field with TVs under a stormy sky">
+    <!-- SVG overlay sized to native pixels so coordinates are easy -->
+    <svg class="hotspots" viewBox="0 0 2560 1563" role="img" aria-label="Clickable TVs">
+      <!-- FRONT-LEFT wooden TV -->
+      <a href="page1.html" target="_self" aria-label="Open page one">
+        <title>Open page one</title>
+        <rect x="880" y="1120" width="360" height="225"></rect>
       </a>
 
-      <!-- TV 2 (middle small tripod) -->
-      <a href="page2.html" target="_self" aria-label="Enter TV 2">
-        <rect x="825" y="715" width="150" height="120" />
+      <!-- Tripod TV (mid-left) -->
+      <a href="page2.html" target="_self" aria-label="Open page two">
+        <title>Open page two</title>
+        <rect x="1150" y="980" width="180" height="190"></rect>
       </a>
 
-      <!-- TV 3 (right big unit) -->
-      <a href="page3.html" target="_self" aria-label="Enter TV 3">
-        <rect x="1460" y="760" width="260" height="190" />
+      <!-- Tiny center TV -->
+      <a href="page3.html" target="_self" aria-label="Open page three">
+        <title>Open page three</title>
+        <rect x="1440" y="1040" width="130" height="105"></rect>
       </a>
+
+      <!-- Front-right small CRT -->
+      <a href="page4.html" target="_self" aria-label="Open page four">
+        <title>Open page four</title>
+        <rect x="1685" y="1120" width="330" height="230"></rect>
+      </a>
+
+      <!-- Big cabinet right -->
+      <a href="page5.html" target="_self" aria-label="Open page five">
+        <title>Open page five</title>
+        <rect x="2050" y="1015" width="380" height="285"></rect>
+      </a>
+
+      <!-- You can add as many as you like: copy one <a>…</a> block and tweak x/y/width/height -->
     </svg>
   </div>
+
+  <div class="hint">Press <kbd>D</kbd> to toggle hotspot boxes • Add <code>?debug</code> to URL</div>
+
+  <script>
+    // Debug helper: add ?debug to URL or press "d" to show the boxes
+    const params = new URLSearchParams(location.search);
+    if (params.has('debug')) document.body.classList.add('debug');
+    window.addEventListener('keydown', (e)=>{
+      if (e.key.toLowerCase()==='d') document.body.classList.toggle('debug');
+    });
+  </script>
 </body>
 </html>
