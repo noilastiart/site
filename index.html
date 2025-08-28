@@ -6,34 +6,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Noilasti – TV Field</title>
   <style>
-    :root{
-      /* native size of landing-bg.png */
-      --bg-w: 2560;
-      --bg-h: 1563;
-      --maxw: 1600px;
-    }
+    :root{ --maxw: 1600px; }
 
-    html, body { height:100%; margin:0; background:#000; color:#eee; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    html, body { height:100%; margin:0; background:#000; color:#eee;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 
     .stage{
       position:relative;
       width:100%;
       max-width: var(--maxw);
       margin-inline:auto;
-      aspect-ratio: var(--bg-w) / var(--bg-h);
-      background: center / cover no-repeat url("landing-bg.png");
-      /* If you prefer “contain” (whole image always visible), swap cover->contain */
+      /* aspect-ratio is set via JS from the image’s natural size */
+      background:#000;
     }
 
-    /* SVG overlay fills the stage */
+    /* The image is a real element so we can read its natural size */
+    img.bg{
+      width:100%; height:100%;
+      object-fit: contain;               /* show whole image, no crop */
+      display:block;
+      user-select:none; -webkit-user-drag:none;
+    }
+
+    /* SVG overlay sits exactly on top of the image area */
     svg.hotspots{
       position:absolute; inset:0;
       width:100%; height:100%;
-      pointer-events:none;                 /* SVG ignores pointer except on links below */
+      pointer-events:none;
     }
-    svg.hotspots a{ pointer-events:all; }  /* make only links clickable */
+    svg.hotspots a{ pointer-events:all; }
 
-    /* Look & feel for boxes (visible only in debug) */
+    /* Debug styling for boxes */
     .hotspots rect{
       fill: rgba(255,255,255,.12);
       stroke: rgba(255,255,255,.85);
@@ -41,26 +44,17 @@
       rx: 18; ry: 18;
       transition: transform .15s ease, filter .15s ease, stroke .15s ease;
     }
-    /* glow effect on hover/focus */
-    .hotspots a:focus rect,
-    .hotspots a:hover rect{
+    .hotspots a:hover rect,
+    .hotspots a:focus rect{
       transform: scale(1.02);
       filter: drop-shadow(0 0 10px rgba(255,255,255,.75));
-      stroke: #fff;
-      outline: none;
+      stroke:#fff;
+      outline:none;
     }
+    /* Hide boxes when not debugging */
+    body:not(.debug) .hotspots rect{ fill:transparent; stroke:transparent; }
+    body:not(.debug) .hotspots a:focus rect{ stroke:#fff; stroke-dasharray:6 6; }
 
-    /* In normal mode boxes are invisible but still clickable */
-    body:not(.debug) .hotspots rect{
-      fill: transparent; stroke: transparent;
-    }
-
-    /* Keyboard focus ring for accessibility (when boxes are invisible) */
-    body:not(.debug) .hotspots a:focus rect{
-      stroke: #fff; stroke-dasharray: 6 6;
-    }
-
-    /* Optional helper badge bottom-left to remind the debug toggle */
     .hint{
       position:fixed; left:.75rem; bottom:.5rem; color:#9aa; font-size:.8rem; opacity:.75;
       user-select:none;
@@ -69,52 +63,41 @@
 </head>
 <body>
 
-  <div class="stage" aria-label="Surreal field with TVs under a stormy sky">
-    <!-- SVG overlay sized to native pixels so coordinates are easy -->
-    <svg class="hotspots" viewBox="0 0 2560 1563" role="img" aria-label="Clickable TVs">
-      <!-- FRONT-LEFT wooden TV -->
-      <a href="page1.html" target="_self" aria-label="Open page one">
-        <title>Open page one</title>
-        <rect x="880" y="1120" width="360" height="225"></rect>
-      </a>
-
-      <!-- Tripod TV (mid-left) -->
-      <a href="page2.html" target="_self" aria-label="Open page two">
-        <title>Open page two</title>
-        <rect x="1150" y="980" width="180" height="190"></rect>
-      </a>
-
-      <!-- Tiny center TV -->
-      <a href="page3.html" target="_self" aria-label="Open page three">
-        <title>Open page three</title>
-        <rect x="1440" y="1040" width="130" height="105"></rect>
-      </a>
-
-      <!-- Front-right small CRT -->
-      <a href="page4.html" target="_self" aria-label="Open page four">
-        <title>Open page four</title>
-        <rect x="1685" y="1120" width="330" height="230"></rect>
-      </a>
-
-      <!-- Big cabinet right -->
-      <a href="page5.html" target="_self" aria-label="Open page five">
-        <title>Open page five</title>
-        <rect x="2050" y="1015" width="380" height="285"></rect>
-      </a>
-
-      <!-- You can add as many as you like: copy one <a>…</a> block and tweak x/y/width/height -->
+  <div class="stage" id="stage" aria-label="Surreal field with TVs under a stormy sky">
+    <img id="bg" class="bg" src="landing-bg.png" alt="Noilasti landing" />
+    <!-- We’ll set the viewBox from the image’s natural size after it loads -->
+    <svg id="overlay" class="hotspots" viewBox="0 0 2560 1563" role="img" aria-label="Clickable TVs">
+      <!-- EXAMPLE HOTSPOTS — adjust once while in ?debug -->
+      <a href="page1.html" aria-label="Open page one"><rect x="880"  y="1120" width="360" height="225"/></a>
+      <a href="page2.html" aria-label="Open page two"><rect x="1150" y="980"  width="180" height="190"/></a>
+      <a href="page3.html" aria-label="Open page three"><rect x="1440" y="1040" width="130" height="105"/></a>
+      <a href="page4.html" aria-label="Open page four"><rect x="1685" y="1120" width="330" height="230"/></a>
+      <a href="page5.html" aria-label="Open page five"><rect  x="2050" y="1015" width="380" height="285"/></a>
     </svg>
   </div>
 
   <div class="hint">Press <kbd>D</kbd> to toggle hotspot boxes • Add <code>?debug</code> to URL</div>
 
   <script>
-    // Debug helper: add ?debug to URL or press "d" to show the boxes
-    const params = new URLSearchParams(location.search);
-    if (params.has('debug')) document.body.classList.add('debug');
-    window.addEventListener('keydown', (e)=>{
-      if (e.key.toLowerCase()==='d') document.body.classList.toggle('debug');
-    });
+    // Debug toggle
+    if (new URLSearchParams(location.search).has('debug')) document.body.classList.add('debug');
+    window.addEventListener('keydown', e => { if (e.key.toLowerCase()==='d') document.body.classList.toggle('debug'); });
+
+    // Align SVG to image’s real dimensions and set aspect-ratio accordingly
+    const img = document.getElementById('bg');
+    const stage = document.getElementById('stage');
+    const overlay = document.getElementById('overlay');
+
+    function syncOverlay(){
+      const w = img.naturalWidth, h = img.naturalHeight;
+      if (!w || !h) return;
+      overlay.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      // keep container’s aspect exactly the same as the image
+      stage.style.aspectRatio = `${w} / ${h}`;
+    }
+
+    if (img.complete) syncOverlay();
+    img.addEventListener('load', syncOverlay);
   </script>
 </body>
 </html>
