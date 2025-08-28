@@ -2,125 +2,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Noilasti</title>
-<style>
-  :root{
-    /* native image aspect ratio (your PNG is 2560×1563 in our mock-up) */
-    --bg-w: 2560;
-    --bg-h: 1563;
-  }
-
-  html, body {
-    height: 100%;
-    margin: 0;
-    background: #000;
-    color: #eee;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
-
-  /* Stage uses the image as a background so we can position hotspots by % */
-  .stage {
-    position: relative;
-    width: 100%;
-    max-width: 1600px;      /* feel free to change */
-    margin-inline: auto;
-    aspect-ratio: var(--bg-w) / var(--bg-h);
-    background: center/cover no-repeat url("landing-bg.png");
-    /* If you prefer contain (show full image without cropping), swap: */
-    /* background-size: contain; */
-  }
-
-  /* Invisible link boxes (hotspots) */
-  .hotspot {
-    position: absolute;
-    display: block;
-    outline: none;
-    /* Accessibility: give them a focus ring for keyboard users */
-    border-radius: 6px;
-  }
-  .hotspot:focus-visible {
-    box-shadow: 0 0 0 3px #7cf, inset 0 0 0 3px #7cf;
-  }
-  .hotspot:hover { cursor: pointer; }
-
-  /* --- DEBUG MODE (press D to toggle) --- */
-  .debug .hotspot {
-    background: rgba(255, 255, 255, 0.06);
-    outline: 1px dashed rgba(255,255,255,.45);
-    backdrop-filter: blur(2px);
-  }
-
-  /* Subtle glow on hover (even when not debugging) */
-  .hotspot:hover::after {
-    content:"";
-    position:absolute; inset:-6%;
-    border-radius:10px;
-    box-shadow: 0 0 28px 6px rgba(173, 216, 230, 0.25);
-  }
-
-  /* You can fine-tune per-TV sizes at narrower screens */
-  @media (max-width: 900px){
-    /* Example: slightly enlarge the near TVs on small screens */
-    #tv-front-left  { width:16%; }
-    #tv-front-right { width:16%; }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Noilasti</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --img-w: 1920; --img-h: 1080; } /* set to your image’s pixel size */
+    html, body { margin:0; height:100%; background:#000; }
+    .stage {
+      position: relative;
+      max-width: 100vw;
+      margin: 0 auto;
+      line-height: 0; /* remove gaps under images */
+    }
+    .bg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    /* SVG overlays the image and scales with it */
+    .hotspots {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* only hotspots catch clicks */
+    }
+    .hotspots a {
+      pointer-events: auto;
+    }
+    /* Dev mode: make boxes visible while positioning, then set fill to transparent */
+    .hotspots rect {
+      fill: rgba(0, 255, 255, 0.18);       /* temporarily visible */
+      stroke: rgba(0, 255, 255, 0.9);
+      stroke-width: 3;
+      rx: 10; ry: 10;
+    }
+    .hotspots a:focus rect { outline: 3px solid #fff; outline-offset: 4px; }
+  </style>
 </head>
 <body>
+  <div class="stage" aria-label="Noilasti landing">
+    <!-- Your background image -->
+    <img src="landing-bg.png" class="bg" alt="Surreal field with TVs under a stormy sky" />
 
-<div class="stage" id="stage">
-  <!--
-    Hotspots are positioned with TOP/LEFT as percentages of the stage,
-    and sized by WIDTH (height auto via aspect fit of the TV screen area).
-    Adjust the numbers to line up exactly over your TVs.
-  -->
+    <!-- SVG overlay sized to your image’s original pixels via viewBox -->
+    <svg class="hotspots"
+         viewBox="0 0 1920 1080"  /* change to your image’s exact pixels */
+         preserveAspectRatio="none"
+         role="presentation">
+      <!-- TV 1 (left wood console) -->
+      <a href="page1.html" target="_self" aria-label="Enter TV 1">
+        <rect x="330" y="775" width="260" height="190" />
+      </a>
 
-  <!-- Front-left wood console TV -->
-  <a id="tv-front-left" class="hotspot"
-     href="/studio"
-     style="left: 28.2%; top: 74.8%; width: 12.2%; height: 9.5%;"></a>
+      <!-- TV 2 (middle small tripod) -->
+      <a href="page2.html" target="_self" aria-label="Enter TV 2">
+        <rect x="825" y="715" width="150" height="120" />
+      </a>
 
-  <!-- Tripod TV near road center-left -->
-  <a id="tv-tripod" class="hotspot"
-     href="/projects"
-     style="left: 43.8%; top: 65.4%; width: 7.8%; height: 6.2%;"></a>
-
-  <!-- Small cube TV mid-field -->
-  <a id="tv-cube" class="hotspot"
-     href="/arcana"
-     style="left: 56.9%; top: 67.2%; width: 5.4%; height: 4.6%;"></a>
-
-  <!-- Front-right CRT on ground -->
-  <a id="tv-front-right" class="hotspot"
-     href="/shop"
-     style="left: 68.7%; top: 72.2%; width: 12.0%; height: 9.6%;"></a>
-
-  <!-- Right console TV on legs -->
-  <a id="tv-right-console" class="hotspot"
-     href="/about"
-     style="left: 80.7%; top: 66.4%; width: 12.4%; height: 10.2%;"></a>
-
-  <!-- You can add more distant TVs the same way -->
-  <!-- <a class="hotspot" href="/secret" style="left: 60%; top: 59%; width: 4.6%; height: 3.6%;"></a> -->
-</div>
-
-<script>
-  // Toggle debug overlay with the "D" key
-  document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'd') {
-      document.getElementById('stage').classList.toggle('debug');
-    }
-  });
-
-  // Optional: make the whole stage keyboard-navigable first
-  // by moving focus to the first hotspot on Tab from address bar.
-  window.addEventListener('load', () => {
-    const first = document.querySelector('.hotspot');
-    if (first) first.setAttribute('tabindex', '0');
-  });
-</script>
-
+      <!-- TV 3 (right big unit) -->
+      <a href="page3.html" target="_self" aria-label="Enter TV 3">
+        <rect x="1460" y="760" width="260" height="190" />
+      </a>
+    </svg>
+  </div>
 </body>
 </html>
