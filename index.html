@@ -1,82 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Noilasti Landing</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Noilasti — Landing</title>
   <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: #fff;
-      font-family: system-ui, sans-serif;
+    :root{
+      /* 👉 update these to the true pixel size of landing-bg-f.png if you know it */
+      --bg-w: 2560;
+      --bg-h: 1563;
+
+      --card-shadow: 0 18px 60px rgba(0,0,0,.45);
     }
 
-    .stage {
-      position: relative;
-      width: 100%;
-      max-width: 1600px;
-      margin: 0 auto;
+    html, body{
+      height:100%;
+      margin:0;
+      background:#000;
+      color:#eee;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
-    .bg {
-      width: 100%;
-      height: auto;
-      display: block;
+    /* Stage keeps the exact aspect ratio so % coordinates land correctly */
+    .stage{
+      position:relative;
+      width:100%;
+      max-width:1600px;
+      margin-inline:auto;
+      aspect-ratio: var(--bg-w) / var(--bg-h);
+      /* ⬇️ just this line changed to your new image */
+      background: #000 center/cover no-repeat url("landing-bg-f.png");
+      box-shadow: var(--card-shadow);
+      overflow:hidden;
     }
 
-    .hotspot {
-      position: absolute;
-      color: rgba(255, 255, 255, 0);
-      font-size: 1.5rem;
-      font-weight: bold;
-      transition: color 0.3s ease;
-      pointer-events: auto;
-      text-decoration: none;
+    /* Generic hotspot (an <a>) positioned by CSS vars */
+    .tv{
+      position:absolute;
+      left: calc(var(--x) * 1%);
+      top:  calc(var(--y) * 1%);
+      width: calc(var(--w) * 1%);
+      height: calc(var(--h, var(--w) * .8) * 1%); /* set --h if the TV isn’t ~16:9 */
+      transform: translate(-50%, -50%);
+      display:block;
+      border-radius: 12px;
+      outline: none;
     }
 
-    .hotspot:hover {
-      color: rgba(255, 255, 255, 1);
+    /* subtle affordances */
+    .tv:focus-visible{ box-shadow: 0 0 0 3px rgba(0,255,255,.9); }
+    .tv:hover{ box-shadow: 0 0 0 2px rgba(0,255,255,.7), 0 18px 40px rgba(0,0,0,.45); }
+
+    /* Label pill made from the link's data-label */
+    .tv::after{
+      content: attr(data-label);
+      position:absolute;
+      left:50%;
+      top: calc(100% + 8px);
+      transform: translate(-50%, 6px);
+      padding:.35rem .6rem;
+      font: 600 14px/1.1 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      color:#eafcff;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:999px;
+      letter-spacing:.02em;
+      white-space:nowrap;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .tv:hover::after, .tv:focus-visible::after{
+      opacity:1;
+      transform: translate(-50%, 0);
+    }
+    @media (max-width: 640px){
+      .tv::after{ opacity:1; transform: translate(-50%, 0); }
     }
 
-    /* Position TVs (tweak % to line them up) */
-    .tv1 { top: 62%; left: 16%; }
-    .tv2 { top: 60%; left: 36%; }
-    .tv3 { top: 65%; left: 54%; }
-    .tv4 { top: 58%; left: 73%; }
-
-    /* watermark idea */
-    .about {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      font-size: 1rem;
-      color: rgba(255,255,255,0.6);
-      text-decoration: none;
-    }
-    .about:hover {
-      color: white;
-    }
+    /* 🔧 DEV: press D or add ?debug to URL to see boxes */
+    .debug .tv{ background: rgba(0,255,255,.18); border:1px solid rgba(0,255,255,.45); }
   </style>
 </head>
 <body>
-  <div class="stage">
-    <!-- Background -->
-    <img src="landing-bg-f.png" alt="Noilasti surreal field of TVs" class="bg" />
+  <main class="stage" aria-label="Noilasti landing">
 
-    <!-- Hotspot links -->
-    <a href="pusciverse.html" class="hotspot tv1">Pusciverse</a>
-    <a href="shop.html" class="hotspot tv2">Shop</a>
-    <a href="art.html" class="hotspot tv3">Art</a>
-    <a href="contact.html" class="hotspot tv4">Contact</a>
+    <!-- TV hotspots (percent coordinates). Tweak --x/--y/--w if needed. -->
 
-    <!-- About watermark -->
-    <a href="about.html" class="about">About</a>
-  </div>
+    <!-- Left foreground console TV -->
+    <a class="tv" href="art.html"
+       style="--x:15.2; --y:71.6; --w:12;"
+       data-label="Art" aria-label="Art"></a>
+
+    <!-- Left–mid small TV on stand -->
+    <a class="tv" href="pusciverse.html"
+       style="--x:43.4; --y:60.1; --w:8.5;"
+       data-label="Pusciverse" aria-label="Pusciverse"></a>
+
+    <!-- Tiny cube TV (center mid) -->
+    <a class="tv" href="projects.html"
+       style="--x:53.9; --y:59.5; --w:4.6;"
+       data-label="Projects" aria-label="Projects"></a>
+
+    <!-- Foreground right static TV -->
+    <a class="tv" href="shop.html"
+       style="--x:64.5; --y:71.1; --w:9;"
+       data-label="Shop" aria-label="Shop"></a>
+
+    <!-- Rightmost large cabinet TV -->
+    <a class="tv" href="contact.html"
+       style="--x:78.9; --y:59.5; --w:10;"
+       data-label="Contact" aria-label="Contact"></a>
+
+    <!-- Watermark in the lower-left corner as About -->
+    <a class="tv" href="about.html"
+       style="--x:4.7; --y:86.4; --w:9; --h:9;"
+       data-label="About" aria-label="About"></a>
+
+  </main>
+
+  <script>
+    // Enable debug via ?debug or by pressing "d"
+    const params = new URLSearchParams(location.search);
+    if (params.has('debug')) document.documentElement.classList.add('debug');
+    window.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'd') document.documentElement.classList.toggle('debug');
+    });
+  </script>
 </body>
 </html>
 
-     
 
 
   
