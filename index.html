@@ -1,103 +1,136 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Noilasti – TV Field</title>
+  <title>Noilasti — Landing</title>
   <style>
-    :root{ --maxw: 1600px; }
+    :root{ --shadow: 0 18px 60px rgba(0,0,0,.45); }
 
-    html, body { height:100%; margin:0; background:#000; color:#eee;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    html,body{
+      height:100%;
+      margin:0;
+      background:#000;
+      color:#eee;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    }
 
+    /* Center the stage and keep it from getting HUGE */
+    .wrap{
+      min-height:100dvh;
+      display:grid;
+      place-items:center;
+      padding:2rem 1rem;
+    }
     .stage{
       position:relative;
-      width:100%;
-      max-width: var(--maxw);
-      margin-inline:auto;
-      /* aspect-ratio is set via JS from the image’s natural size */
+      width:clamp(720px, 92vw, 1280px);  /* <- cap size here */
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+      overflow: hidden;
       background:#000;
     }
-
-    /* The image is a real element so we can read its natural size */
-    img.bg{
-      width:100%; height:100%;
-      object-fit: contain;               /* show whole image, no crop */
+    .bg{
       display:block;
-      user-select:none; -webkit-user-drag:none;
+      width:100%;
+      height:auto;         /* container height follows the image */
+      user-select:none;
+      pointer-events:none; /* clicks go to the hotspots, not the image */
     }
 
-    /* SVG overlay sits exactly on top of the image area */
-    svg.hotspots{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      pointer-events:none;
-    }
-    svg.hotspots a{ pointer-events:all; }
-
-    /* Debug styling for boxes */
-    .hotspots rect{
-      fill: rgba(255,255,255,.12);
-      stroke: rgba(255,255,255,.85);
-      stroke-width: 3;
-      rx: 18; ry: 18;
-      transition: transform .15s ease, filter .15s ease, stroke .15s ease;
-    }
-    .hotspots a:hover rect,
-    .hotspots a:focus rect{
-      transform: scale(1.02);
-      filter: drop-shadow(0 0 10px rgba(255,255,255,.75));
-      stroke:#fff;
+    /* Hotspots positioned by % of the image box */
+    .tv{
+      position:absolute;
+      left: calc(var(--x) * 1%);
+      top:  calc(var(--y) * 1%);
+      width: calc(var(--w) * 1%);
+      height: calc(var(--h, var(--w) * .8) * 1%);
+      transform: translate(-50%, -50%);
+      display:block;
+      border-radius:12px;
       outline:none;
     }
-    /* Hide boxes when not debugging */
-    body:not(.debug) .hotspots rect{ fill:transparent; stroke:transparent; }
-    body:not(.debug) .hotspots a:focus rect{ stroke:#fff; stroke-dasharray:6 6; }
 
-    .hint{
-      position:fixed; left:.75rem; bottom:.5rem; color:#9aa; font-size:.8rem; opacity:.75;
-      user-select:none;
+    /* glow & label on hover/focus */
+    .tv:focus-visible{ box-shadow: 0 0 0 3px rgba(0,255,255,.9); }
+    .tv:hover{ box-shadow: 0 0 0 2px rgba(0,255,255,.7), 0 18px 40px rgba(0,0,0,.45); }
+
+    .tv::after{
+      content: attr(data-label);
+      position:absolute;
+      left:50%; top: calc(100% + 8px);
+      transform: translate(-50%, 6px);
+      padding:.35rem .6rem;
+      font:600 14px/1.1 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+      color:#eafcff;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.2);
+      border-radius:999px;
+      letter-spacing:.02em;
+      white-space:nowrap;
+      opacity:0; pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
     }
+    .tv:hover::after, .tv:focus-visible::after{
+      opacity:1; transform: translate(-50%, 0);
+    }
+    @media (max-width:640px){ .tv::after{ opacity:1; transform: translate(-50%,0); } }
+
+    /* Debug overlay (toggle with D or ?debug) */
+    .debug .tv{ background: rgba(0,255,255,.18); border:1px solid rgba(0,255,255,.45); }
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <main class="stage" aria-label="Noilasti landing">
+      <!-- Use the real image directly -->
+      <img class="bg" src="landing-bg-f.png" alt="Noilasti televisions under a stormy sky">
 
-  <div class="stage" id="stage" aria-label="Surreal field with TVs under a stormy sky">
-    <img id="bg" class="bg" src="landing-bg.png" alt="Noilasti landing" />
-    <!-- We’ll set the viewBox from the image’s natural size after it loads -->
-    <svg id="overlay" class="hotspots" viewBox="0 0 2560 1563" role="img" aria-label="Clickable TVs">
-      <!-- EXAMPLE HOTSPOTS — adjust once while in ?debug -->
-      <a href="page1.html" aria-label="Open page one"><rect x="880"  y="1120" width="360" height="225"/></a>
-      <a href="page2.html" aria-label="Open page two"><rect x="1150" y="980"  width="180" height="190"/></a>
-      <a href="page3.html" aria-label="Open page three"><rect x="1440" y="1040" width="130" height="105"/></a>
-      <a href="page4.html" aria-label="Open page four"><rect x="1685" y="1120" width="330" height="230"/></a>
-      <a href="page5.html" aria-label="Open page five"><rect  x="2050" y="1015" width="380" height="285"/></a>
-    </svg>
+      <!-- Hotspots (percent coords). Tweak --x/--y/--w (and --h if needed). -->
+      <!-- Left foreground console TV -->
+      <a class="tv" href="art.html"
+         style="--x:16.2; --y:78.5; --w:12.0;"
+         data-label="Art" aria-label="Art"></a>
+
+      <!-- Left-mid small TV on stand -->
+      <a class="tv" href="pusciverse.html"
+         style="--x:44.6; --y:64.4; --w:8.5;"
+         data-label="Pusciverse" aria-label="Pusciverse"></a>
+
+      <!-- Tiny cube TV (center mid) -->
+      <a class="tv" href="projects.html"
+         style="--x:54.8; --y:63.8; --w:4.8;"
+         data-label="Projects" aria-label="Projects"></a>
+
+      <!-- Foreground right static TV -->
+      <a class="tv" href="shop.html"
+         style="--x:66.0; --y:78.2; --w:9.0;"
+         data-label="Shop" aria-label="Shop"></a>
+
+      <!-- Rightmost large cabinet TV -->
+      <a class="tv" href="contact.html"
+         style="--x:80.1; --y:64.1; --w:10.5;"
+         data-label="Contact" aria-label="Contact"></a>
+
+      <!-- Watermark in lower-left as About -->
+      <a class="tv" href="about.html"
+         style="--x:6.2; --y:90.2; --w:8.8; --h:8.8;"
+         data-label="About" aria-label="About"></a>
+    </main>
   </div>
 
-  <div class="hint">Press <kbd>D</kbd> to toggle hotspot boxes • Add <code>?debug</code> to URL</div>
-
   <script>
-    // Debug toggle
-    if (new URLSearchParams(location.search).has('debug')) document.body.classList.add('debug');
-    window.addEventListener('keydown', e => { if (e.key.toLowerCase()==='d') document.body.classList.toggle('debug'); });
-
-    // Align SVG to image’s real dimensions and set aspect-ratio accordingly
-    const img = document.getElementById('bg');
-    const stage = document.getElementById('stage');
-    const overlay = document.getElementById('overlay');
-
-    function syncOverlay(){
-      const w = img.naturalWidth, h = img.naturalHeight;
-      if (!w || !h) return;
-      overlay.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      // keep container’s aspect exactly the same as the image
-      stage.style.aspectRatio = `${w} / ${h}`;
-    }
-
-    if (img.complete) syncOverlay();
-    img.addEventListener('load', syncOverlay);
+    // Toggle debug boxes with ?debug or D
+    const p = new URLSearchParams(location.search);
+    if (p.has('debug')) document.documentElement.classList.add('debug');
+    addEventListener('keydown',e=>{
+      if(e.key.toLowerCase()==='d') document.documentElement.classList.toggle('debug');
+    });
   </script>
 </body>
 </html>
+
+    
+
+    
