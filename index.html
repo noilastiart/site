@@ -1,103 +1,83 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Noilasti – TV Field</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noilasti Landing</title>
   <style>
-    :root{ --maxw: 1600px; }
-
-    html, body { height:100%; margin:0; background:#000; color:#eee;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
-
-    .stage{
-      position:relative;
-      width:100%;
-      max-width: var(--maxw);
-      margin-inline:auto;
-      /* aspect-ratio is set via JS from the image’s natural size */
-      background:#000;
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: system-ui, sans-serif;
     }
 
-    /* The image is a real element so we can read its natural size */
-    img.bg{
-      width:100%; height:100%;
-      object-fit: contain;               /* show whole image, no crop */
-      display:block;
-      user-select:none; -webkit-user-drag:none;
+    .stage {
+      position: relative;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
     }
 
-    /* SVG overlay sits exactly on top of the image area */
-    svg.hotspots{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      pointer-events:none;
+    .bg {
+      width: 100%;
+      height: auto;
+      display: block;
     }
-    svg.hotspots a{ pointer-events:all; }
 
-    /* Debug styling for boxes */
-    .hotspots rect{
-      fill: rgba(255,255,255,.12);
-      stroke: rgba(255,255,255,.85);
-      stroke-width: 3;
-      rx: 18; ry: 18;
-      transition: transform .15s ease, filter .15s ease, stroke .15s ease;
+    .hotspot {
+      position: absolute;
+      color: rgba(255, 255, 255, 0);
+      font-size: 1.5rem;
+      font-weight: bold;
+      transition: color 0.3s ease;
+      pointer-events: auto;
+      text-decoration: none;
     }
-    .hotspots a:hover rect,
-    .hotspots a:focus rect{
-      transform: scale(1.02);
-      filter: drop-shadow(0 0 10px rgba(255,255,255,.75));
-      stroke:#fff;
-      outline:none;
-    }
-    /* Hide boxes when not debugging */
-    body:not(.debug) .hotspots rect{ fill:transparent; stroke:transparent; }
-    body:not(.debug) .hotspots a:focus rect{ stroke:#fff; stroke-dasharray:6 6; }
 
-    .hint{
-      position:fixed; left:.75rem; bottom:.5rem; color:#9aa; font-size:.8rem; opacity:.75;
-      user-select:none;
+    .hotspot:hover {
+      color: rgba(255, 255, 255, 1);
+    }
+
+    /* Position TVs (tweak % to line them up) */
+    .tv1 { top: 62%; left: 16%; }
+    .tv2 { top: 60%; left: 36%; }
+    .tv3 { top: 65%; left: 54%; }
+    .tv4 { top: 58%; left: 73%; }
+
+    /* watermark idea */
+    .about {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+    }
+    .about:hover {
+      color: white;
     }
   </style>
 </head>
 <body>
+  <div class="stage">
+    <!-- Background -->
+    <img src="landing-bg-f.png" alt="Noilasti surreal field of TVs" class="bg" />
 
-  <div class="stage" id="stage" aria-label="Surreal field with TVs under a stormy sky">
-    <img id="bg" class="bg" src="landing-bg.png" alt="Noilasti landing" />
-    <!-- We’ll set the viewBox from the image’s natural size after it loads -->
-    <svg id="overlay" class="hotspots" viewBox="0 0 2560 1563" role="img" aria-label="Clickable TVs">
-      <!-- EXAMPLE HOTSPOTS — adjust once while in ?debug -->
-      <a href="page1.html" aria-label="Open page one"><rect x="880"  y="1120" width="360" height="225"/></a>
-      <a href="page2.html" aria-label="Open page two"><rect x="1150" y="980"  width="180" height="190"/></a>
-      <a href="page3.html" aria-label="Open page three"><rect x="1440" y="1040" width="130" height="105"/></a>
-      <a href="page4.html" aria-label="Open page four"><rect x="1685" y="1120" width="330" height="230"/></a>
-      <a href="page5.html" aria-label="Open page five"><rect  x="2050" y="1015" width="380" height="285"/></a>
-    </svg>
+    <!-- Hotspot links -->
+    <a href="pusciverse.html" class="hotspot tv1">Pusciverse</a>
+    <a href="shop.html" class="hotspot tv2">Shop</a>
+    <a href="art.html" class="hotspot tv3">Art</a>
+    <a href="contact.html" class="hotspot tv4">Contact</a>
+
+    <!-- About watermark -->
+    <a href="about.html" class="about">About</a>
   </div>
-
-  <div class="hint">Press <kbd>D</kbd> to toggle hotspot boxes • Add <code>?debug</code> to URL</div>
-
-  <script>
-    // Debug toggle
-    if (new URLSearchParams(location.search).has('debug')) document.body.classList.add('debug');
-    window.addEventListener('keydown', e => { if (e.key.toLowerCase()==='d') document.body.classList.toggle('debug'); });
-
-    // Align SVG to image’s real dimensions and set aspect-ratio accordingly
-    const img = document.getElementById('bg');
-    const stage = document.getElementById('stage');
-    const overlay = document.getElementById('overlay');
-
-    function syncOverlay(){
-      const w = img.naturalWidth, h = img.naturalHeight;
-      if (!w || !h) return;
-      overlay.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      // keep container’s aspect exactly the same as the image
-      stage.style.aspectRatio = `${w} / ${h}`;
-    }
-
-    if (img.complete) syncOverlay();
-    img.addEventListener('load', syncOverlay);
-  </script>
 </body>
 </html>
+
+     
+
+
+  
+  
